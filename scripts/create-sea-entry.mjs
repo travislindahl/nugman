@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global console */
 // Generates a CJS wrapper for Node.js SEA from the ESM bundle.
 // SEA only supports CJS, so this writes the ESM bundle to a temp file
 // at runtime and dynamic-imports it.
