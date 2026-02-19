@@ -128,6 +128,9 @@ export function PackageList(): React.ReactNode {
               const idx = items.findIndex((i) => i.key === _item.key);
               setSelectedIndex(idx);
             }}
+            onHighlight={(_item, index) => {
+              setSelectedIndex(index);
+            }}
             onBack={goBack}
             isActive={!confirmRemove}
           />

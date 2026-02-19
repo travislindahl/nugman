@@ -81,6 +81,10 @@ export function CacheBrowse({ cacheType }: CacheBrowseProps): React.ReactNode {
               const entry = entries.find((e) => e.path === item.key);
               if (entry) setSelectedEntry(entry);
             }}
+            onHighlight={(_item, index) => {
+              const entry = entries[index];
+              if (entry) setSelectedEntry(entry);
+            }}
             onBack={goBack}
           />
         </Box>

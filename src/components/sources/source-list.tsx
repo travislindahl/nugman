@@ -161,6 +161,9 @@ export function SourceList(): React.ReactNode {
               const idx = items.indexOf(item);
               setSelectedIndex(idx);
             }}
+            onHighlight={(_item, index) => {
+              setSelectedIndex(index);
+            }}
             onBack={goBack}
             isActive={!confirmDelete}
           />

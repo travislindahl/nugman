@@ -109,6 +109,9 @@ export function CacheList(): React.ReactNode {
             onSelect={(item) => {
               navigate({ kind: "cache-browse", cacheType: item.key as CacheType });
             }}
+            onHighlight={(_item, index) => {
+              selectedIndexRef.current = index;
+            }}
             onBack={goBack}
             isActive={!confirmClear}
           />

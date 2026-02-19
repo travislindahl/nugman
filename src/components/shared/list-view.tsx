@@ -13,6 +13,7 @@ export interface ListViewItem {
 interface ListViewProps {
   readonly items: readonly ListViewItem[];
   readonly onSelect: (item: ListViewItem) => void;
+  readonly onHighlight?: (item: ListViewItem, index: number) => void;
   readonly onBack?: () => void;
   readonly isActive?: boolean;
 }
@@ -20,6 +21,7 @@ interface ListViewProps {
 export function ListView({
   items,
   onSelect,
+  onHighlight,
   onBack,
   isActive = true,
 }: ListViewProps): React.ReactNode {
@@ -35,9 +37,17 @@ export function ListView({
       if (!isActive || items.length === 0) return;
 
       if (key.upArrow || input === "k") {
-        setSelectedIndex((prev) => clampIndex(prev - 1));
+        setSelectedIndex((prev) => {
+          const next = clampIndex(prev - 1);
+          if (next !== prev && onHighlight) onHighlight(items[next]!, next);
+          return next;
+        });
       } else if (key.downArrow || input === "j") {
-        setSelectedIndex((prev) => clampIndex(prev + 1));
+        setSelectedIndex((prev) => {
+          const next = clampIndex(prev + 1);
+          if (next !== prev && onHighlight) onHighlight(items[next]!, next);
+          return next;
+        });
       } else if (key.return) {
         const item = items[selectedIndex];
         if (item) onSelect(item);
