@@ -1,5 +1,7 @@
 # nugman
 
+[![CI](https://github.com/travislindahl/nugman/actions/workflows/ci.yml/badge.svg)](https://github.com/travislindahl/nugman/actions/workflows/ci.yml)
+
 A terminal UI for managing .NET NuGet package sources, caches, and a local package feed. Replace memorizing `dotnet nuget` CLI commands with an interactive, keyboard-driven interface.
 
 ## Features
@@ -13,57 +15,63 @@ A terminal UI for managing .NET NuGet package sources, caches, and a local packa
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) >= 20
 - [.NET SDK](https://dotnet.microsoft.com/) >= 6.0
+- [Node.js](https://nodejs.org/) >= 22 (only needed for npm install or development)
 
 ## Install
 
+### Standalone binary (recommended)
+
+Download the latest binary for your platform:
+
 ```sh
+curl -fsSL https://raw.githubusercontent.com/travislindahl/nugman/main/install.sh | bash
+```
+
+### npm
+
+```sh
+npm install -g nugman
+```
+
+### From source
+
+```sh
+git clone https://github.com/travislindahl/nugman.git
+cd nugman
 npm install
 npm run build
-```
-
-The `nugman` command is available via the `bin` entry after a global or linked install:
-
-```sh
 npm link
-nugman
-```
-
-Or run directly in development:
-
-```sh
-npm run dev
 ```
 
 ## Usage
 
 Launch `nugman` and navigate with the keyboard:
 
-| Key | Action |
-|-----|--------|
-| `Up` / `k` | Move up |
-| `Down` / `j` | Move down |
-| `Enter` | Select |
-| `Escape` | Go back |
-| `a` | Add |
-| `e` | Edit |
-| `d` | Delete |
-| `t` | Toggle enable/disable |
-| `c` | Clear cache |
-| `/` | Search |
-| `h` | Health check |
-| `q` | Quit |
+| Key          | Action                |
+| ------------ | --------------------- |
+| `Up` / `k`   | Move up               |
+| `Down` / `j` | Move down             |
+| `Enter`      | Select                |
+| `Escape`     | Go back               |
+| `a`          | Add                   |
+| `e`          | Edit                  |
+| `d`          | Delete                |
+| `t`          | Toggle enable/disable |
+| `c`          | Clear cache           |
+| `/`          | Search                |
+| `h`          | Health check          |
+| `q`          | Quit                  |
 
 ## Local Package Feed
 
 On first launch, nugman creates a local NuGet source directory in your OS config folder:
 
-| OS | Path |
-|----|------|
-| Windows | `%APPDATA%\nugman\local-source` |
-| macOS | `~/Library/Application Support/nugman/local-source` |
-| Linux | `~/.config/nugman/local-source` |
+| OS      | Path                                                |
+| ------- | --------------------------------------------------- |
+| Windows | `%APPDATA%\nugman\local-source`                     |
+| macOS   | `~/Library/Application Support/nugman/local-source` |
+| Linux   | `~/.config/nugman/local-source`                     |
 
 This source is automatically registered with NuGet and protected from accidental deletion.
 

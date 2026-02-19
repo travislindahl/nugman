@@ -1,0 +1,6 @@
+{
+  "main": "dist/nugman-sea-entry.cjs",
+  "output": "dist/sea-prep.blob",
+  "disableExperimentalSEAWarning": true,
+  "useCodeCache": false
+}

@@ -12,7 +12,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint . && prettier --check ."
+    "lint": "eslint . && prettier --check .",
+    "build:bundle": "esbuild dist/cli.js --bundle --platform=node --format=esm --outfile=dist/nugman-bundle.mjs --alias:react-devtools-core=./scripts/devtools-stub.mjs --banner:js=\"import{createRequire}from'node:module';const require=createRequire(import.meta.url);\"",
+    "build:sea": "bash scripts/build-sea.sh",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "nuget",
@@ -22,6 +25,13 @@
   ],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
   "dependencies": {
     "@inkjs/ui": "^2.0.0",
     "adm-zip": "^0.5.16",
@@ -41,6 +51,8 @@
     "tsx": "^4.21.0",
     "typescript": "5.9",
     "typescript-eslint": "^8.56.0",
+    "esbuild": "^0.25.0",
+    "postject": "^1.0.0-alpha.6",
     "vitest": "^4.0.18"
   }
 }
