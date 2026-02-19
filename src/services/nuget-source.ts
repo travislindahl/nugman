@@ -1,3 +1,4 @@
+import { stat } from "node:fs/promises";
 import type { NuGetSource, SourceHealthResult } from "../types.js";
 import { exec } from "./dotnet-cli.js";
 import { parseSourceList } from "../lib/parse-cli-output.js";
@@ -30,9 +31,36 @@ export async function disableSource(name: string): Promise<void> {
   await exec(["nuget", "disable", "source", name]);
 }
 
+function isLocalSource(url: string): boolean {
+  return !url.startsWith("http://") && !url.startsWith("https://");
+}
+
+async function checkLocalHealth(source: NuGetSource): Promise<SourceHealthResult> {
+  const start = Date.now();
+  try {
+    const info = await stat(source.url);
+    const responseTimeMs = Date.now() - start;
+    return info.isDirectory()
+      ? { sourceName: source.name, status: "healthy", responseTimeMs }
+      : { sourceName: source.name, status: "unhealthy", responseTimeMs, error: "Not a directory" };
+  } catch {
+    const responseTimeMs = Date.now() - start;
+    return {
+      sourceName: source.name,
+      status: "unhealthy",
+      responseTimeMs,
+      error: "Path not found",
+    };
+  }
+}
+
 export async function checkHealth(source: NuGetSource): Promise<SourceHealthResult> {
   if (!source.enabled) {
     return { sourceName: source.name, status: "disabled" };
+  }
+
+  if (isLocalSource(source.url)) {
+    return checkLocalHealth(source);
   }
 
   const start = Date.now();
