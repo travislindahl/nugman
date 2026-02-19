@@ -1,0 +1,46 @@
+{
+  "name": "nugman",
+  "version": "1.0.0",
+  "description": "NuGet TUI Manager - Terminal UI for managing .NET NuGet configurations",
+  "type": "module",
+  "bin": {
+    "nugman": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.tsx",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint . && prettier --check ."
+  },
+  "keywords": [
+    "nuget",
+    "tui",
+    "dotnet",
+    "package-manager"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@inkjs/ui": "^2.0.0",
+    "adm-zip": "^0.5.16",
+    "fast-xml-parser": "^5.3.6",
+    "ink": "^6.8.0",
+    "react": "^19.2.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/adm-zip": "^0.5.7",
+    "@types/node": "^25.3.0",
+    "@types/react": "^19.2.14",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "ink-testing-library": "^4.0.0",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "5.9",
+    "typescript-eslint": "^8.56.0",
+    "vitest": "^4.0.18"
+  }
+}
