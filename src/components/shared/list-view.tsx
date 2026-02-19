@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Text, useInput } from "ink";
 import { colors } from "../../lib/theme.js";
 
@@ -26,6 +26,20 @@ export function ListView({
   isActive = true,
 }: ListViewProps): React.ReactNode {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const onHighlightRef = useRef(onHighlight);
+  onHighlightRef.current = onHighlight;
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const item = itemsRef.current[selectedIndex];
+    if (item && onHighlightRef.current) onHighlightRef.current(item, selectedIndex);
+  }, [selectedIndex]);
 
   const clampIndex = useCallback(
     (index: number) => Math.max(0, Math.min(index, items.length - 1)),
@@ -37,17 +51,9 @@ export function ListView({
       if (!isActive || items.length === 0) return;
 
       if (key.upArrow || input === "k") {
-        setSelectedIndex((prev) => {
-          const next = clampIndex(prev - 1);
-          if (next !== prev && onHighlight) onHighlight(items[next]!, next);
-          return next;
-        });
+        setSelectedIndex((prev) => clampIndex(prev - 1));
       } else if (key.downArrow || input === "j") {
-        setSelectedIndex((prev) => {
-          const next = clampIndex(prev + 1);
-          if (next !== prev && onHighlight) onHighlight(items[next]!, next);
-          return next;
-        });
+        setSelectedIndex((prev) => clampIndex(prev + 1));
       } else if (key.return) {
         const item = items[selectedIndex];
         if (item) onSelect(item);
