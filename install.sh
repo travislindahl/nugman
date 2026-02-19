@@ -17,11 +17,13 @@ case "$OS" in
     ;;
 esac
 
-case "$ARCH" in
-  x86_64)  ARCH_NAME="x64" ;;
-  aarch64|arm64) ARCH_NAME="arm64" ;;
+case "${OS_NAME}-${ARCH}" in
+  linux-x86_64)   ARCH_NAME="x64" ;;
+  darwin-arm64)   ARCH_NAME="arm64" ;;
+  linux-aarch64)  ARCH_NAME="x64" ;; # fallback — no linux-arm64 binary yet
   *)
-    echo "Error: Unsupported architecture: $ARCH" >&2
+    echo "Error: No prebuilt binary for ${OS} ${ARCH}. Install via npm instead:" >&2
+    echo "  npm install -g nugman" >&2
     exit 1
     ;;
 esac
