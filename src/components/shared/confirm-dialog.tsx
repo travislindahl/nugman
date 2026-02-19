@@ -1,4 +1,4 @@
-import { Box, Text } from "ink";
+import { Box, Text, useInput } from "ink";
 import { ConfirmInput } from "@inkjs/ui";
 import { colors } from "../../lib/theme.js";
 
@@ -13,6 +13,10 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps): React.ReactNode {
+  useInput((_input, key) => {
+    if (key.escape) onCancel();
+  });
+
   return (
     <Box flexDirection="column">
       <Text color={colors.warning}>{message}</Text>
