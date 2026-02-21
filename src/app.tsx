@@ -25,7 +25,7 @@ const MIN_ROWS = 24;
 function AppContent(): React.ReactNode {
   const { checking, available, error } = useDotnet();
   const state = useAppState();
-  const [initializing, setInitializing] = useState(false);
+  const [initializing, setInitializing] = useState(true);
   const [initError, setInitError] = useState<string | null>(null);
   const { stdout } = useStdout();
 
