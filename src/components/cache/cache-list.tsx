@@ -22,14 +22,18 @@ const HINTS = [
   { key: "Esc", label: "Back" },
 ];
 
-export function CacheList(): React.ReactNode {
+interface CacheListProps {
+  readonly initialIndex?: number;
+}
+
+export function CacheList({ initialIndex }: CacheListProps): React.ReactNode {
   const { navigate, goBack } = useNavigation();
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState<CacheType | "all" | null>(null);
-  const selectedIndexRef = useRef(0);
+  const selectedIndexRef = useRef(initialIndex ?? 0);
 
   const loadCaches = useCallback(async () => {
     setLoading(true);
@@ -107,13 +111,16 @@ export function CacheList(): React.ReactNode {
           <ListView
             items={items}
             onSelect={(item) => {
-              navigate({ kind: "cache-browse", cacheType: item.key as CacheType });
+              navigate(
+                { kind: "cache-browse", cacheType: item.key as CacheType },
+                selectedIndexRef.current,
+              );
             }}
             onHighlight={(_item, index) => {
               selectedIndexRef.current = index;
             }}
-            onBack={goBack}
             isActive={!confirmClear}
+            initialIndex={selectedIndexRef.current}
           />
         </Box>
       )}

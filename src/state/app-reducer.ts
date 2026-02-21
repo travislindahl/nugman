@@ -1,26 +1,30 @@
 import type { CacheType, NuGetSource, NuGetCacheLocation, LocalSourcePackage } from "../types.js";
 
+interface ViewBase {
+  readonly selectedIndex?: number;
+}
+
 export type AppView =
-  | { readonly kind: "main-menu" }
-  | { readonly kind: "sources" }
-  | { readonly kind: "source-edit"; readonly sourceName: string }
-  | { readonly kind: "source-add" }
-  | { readonly kind: "cache" }
-  | { readonly kind: "cache-browse"; readonly cacheType: CacheType }
-  | { readonly kind: "local-source" }
-  | { readonly kind: "local-source-add" }
-  | { readonly kind: "package-detail"; readonly packagePath: string }
-  | { readonly kind: "package-search" }
-  | {
+  | (ViewBase & { readonly kind: "main-menu" })
+  | (ViewBase & { readonly kind: "sources" })
+  | (ViewBase & { readonly kind: "source-edit"; readonly sourceName: string })
+  | (ViewBase & { readonly kind: "source-add" })
+  | (ViewBase & { readonly kind: "cache" })
+  | (ViewBase & { readonly kind: "cache-browse"; readonly cacheType: CacheType })
+  | (ViewBase & { readonly kind: "local-source" })
+  | (ViewBase & { readonly kind: "local-source-add" })
+  | (ViewBase & { readonly kind: "package-detail"; readonly packagePath: string })
+  | (ViewBase & { readonly kind: "package-search" })
+  | (ViewBase & {
       readonly kind: "search-result-detail";
       readonly packageId: string;
       readonly sourceName: string;
       readonly latestVersion: string;
       readonly totalDownloads?: number;
       readonly owners?: string;
-    }
-  | { readonly kind: "config-viewer" }
-  | { readonly kind: "config-file-detail"; readonly filePath: string };
+    })
+  | (ViewBase & { readonly kind: "config-viewer" })
+  | (ViewBase & { readonly kind: "config-file-detail"; readonly filePath: string });
 
 export interface AppState {
   readonly currentView: AppView;
@@ -33,7 +37,7 @@ export interface AppState {
 }
 
 export type AppAction =
-  | { readonly type: "NAVIGATE"; readonly view: AppView }
+  | { readonly type: "NAVIGATE"; readonly view: AppView; readonly fromSelectedIndex?: number }
   | { readonly type: "GO_BACK" }
   | { readonly type: "SET_SOURCES"; readonly sources: readonly NuGetSource[] }
   | { readonly type: "SET_CACHE_LOCATIONS"; readonly locations: readonly NuGetCacheLocation[] }
@@ -57,7 +61,12 @@ export function appReducer(state: AppState, action: AppAction): AppState {
       return {
         ...state,
         currentView: action.view,
-        viewHistory: [...state.viewHistory, state.currentView],
+        viewHistory: [
+          ...state.viewHistory,
+          action.fromSelectedIndex != null
+            ? { ...state.currentView, selectedIndex: action.fromSelectedIndex }
+            : state.currentView,
+        ],
         error: undefined,
       };
     case "GO_BACK": {

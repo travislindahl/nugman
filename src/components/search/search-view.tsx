@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { Box, Text, useInput } from "ink";
 import { TextInput } from "@inkjs/ui";
 import { useNavigation } from "../../hooks/use-navigation.js";
@@ -19,13 +19,18 @@ const HINTS = [
   { key: "Esc", label: "Back" },
 ];
 
-export function SearchView(): React.ReactNode {
+interface SearchViewProps {
+  readonly initialIndex?: number;
+}
+
+export function SearchView({ initialIndex }: SearchViewProps): React.ReactNode {
   const { navigate, goBack } = useNavigation();
   const [searchTerm, setSearchTerm] = useState("");
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState<readonly PackageSearchResult[]>([]);
   const [searched, setSearched] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const selectedIndexRef = useRef(initialIndex ?? 0);
 
   const handleSearch = useCallback(async () => {
     if (!searchTerm.trim() || searching) return;
@@ -82,17 +87,23 @@ export function SearchView(): React.ReactNode {
           onSelect={(item) => {
             const pkg = allPackages.find((p) => `${p.sourceName}:${p.id}` === item.key);
             if (pkg) {
-              navigate({
-                kind: "search-result-detail",
-                packageId: pkg.id,
-                sourceName: pkg.sourceName,
-                latestVersion: pkg.latestVersion,
-                totalDownloads: pkg.totalDownloads,
-                owners: pkg.owners,
-              });
+              navigate(
+                {
+                  kind: "search-result-detail",
+                  packageId: pkg.id,
+                  sourceName: pkg.sourceName,
+                  latestVersion: pkg.latestVersion,
+                  totalDownloads: pkg.totalDownloads,
+                  owners: pkg.owners,
+                },
+                selectedIndexRef.current,
+              );
             }
           }}
-          onBack={goBack}
+          onHighlight={(_item, index) => {
+            selectedIndexRef.current = index;
+          }}
+          initialIndex={initialIndex}
         />
       ) : null}
       <StatusBar hints={HINTS} />

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Text, useInput } from "ink";
 import { useNavigation } from "../../hooks/use-navigation.js";
 import { useAppState } from "../../state/app-context.js";
@@ -21,12 +21,14 @@ const HINTS = [
 
 interface CacheBrowseProps {
   readonly cacheType: CacheType;
+  readonly initialIndex?: number;
 }
 
-export function CacheBrowse({ cacheType }: CacheBrowseProps): React.ReactNode {
+export function CacheBrowse({ cacheType, initialIndex }: CacheBrowseProps): React.ReactNode {
   const { navigate, goBack } = useNavigation();
   const state = useAppState();
   const [selectedEntry, setSelectedEntry] = useState<CacheEntry | null>(null);
+  const selectedIndexRef = useRef(initialIndex ?? 0);
   const location = state.cacheLocations.find((l) => l.type === cacheType);
   const [entries, setEntries] = useState<readonly CacheEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,10 @@ export function CacheBrowse({ cacheType }: CacheBrowseProps): React.ReactNode {
 
   useInput((input, _key) => {
     if (input === "i" && selectedEntry && selectedEntry.name.endsWith(".nupkg")) {
-      navigate({ kind: "package-detail", packagePath: selectedEntry.path });
+      navigate(
+        { kind: "package-detail", packagePath: selectedEntry.path },
+        selectedIndexRef.current,
+      );
     }
   });
 
@@ -82,10 +87,12 @@ export function CacheBrowse({ cacheType }: CacheBrowseProps): React.ReactNode {
               if (entry) setSelectedEntry(entry);
             }}
             onHighlight={(_item, index) => {
+              selectedIndexRef.current = index;
               const entry = entries[index];
               if (entry) setSelectedEntry(entry);
             }}
             onBack={goBack}
+            initialIndex={initialIndex}
           />
         </Box>
       )}

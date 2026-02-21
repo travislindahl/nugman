@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Box, Text, useApp } from "ink";
 import { useNavigation } from "../hooks/use-navigation.js";
 import { ListView } from "./shared/list-view.js";
@@ -21,30 +22,36 @@ const HINTS = [
   { key: "q", label: "Quit" },
 ];
 
-export function MainMenu(): React.ReactNode {
+interface MainMenuProps {
+  readonly initialIndex?: number;
+}
+
+export function MainMenu({ initialIndex }: MainMenuProps): React.ReactNode {
   const { navigate } = useNavigation();
   const { exit } = useApp();
+  const selectedIndexRef = useRef(initialIndex ?? 0);
 
   useInput((input) => {
     if (input === "q") exit();
   });
 
   function handleSelect(item: ListViewItem) {
+    const idx = selectedIndexRef.current;
     switch (item.key) {
       case "sources":
-        navigate({ kind: "sources" });
+        navigate({ kind: "sources" }, idx);
         break;
       case "cache":
-        navigate({ kind: "cache" });
+        navigate({ kind: "cache" }, idx);
         break;
       case "local-source":
-        navigate({ kind: "local-source" });
+        navigate({ kind: "local-source" }, idx);
         break;
       case "package-search":
-        navigate({ kind: "package-search" });
+        navigate({ kind: "package-search" }, idx);
         break;
       case "config-viewer":
-        navigate({ kind: "config-viewer" });
+        navigate({ kind: "config-viewer" }, idx);
         break;
     }
   }
@@ -55,7 +62,14 @@ export function MainMenu(): React.ReactNode {
         {strings.app.title}
       </Text>
       <Box marginY={1}>
-        <ListView items={MENU_ITEMS} onSelect={handleSelect} />
+        <ListView
+          items={MENU_ITEMS}
+          onSelect={handleSelect}
+          onHighlight={(_item, index) => {
+            selectedIndexRef.current = index;
+          }}
+          initialIndex={initialIndex}
+        />
       </Box>
       <StatusBar hints={HINTS} />
     </Box>

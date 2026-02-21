@@ -24,14 +24,18 @@ const HINTS = [
   { key: "Esc", label: "Back" },
 ];
 
-export function SourceList(): React.ReactNode {
+interface SourceListProps {
+  readonly initialIndex?: number;
+}
+
+export function SourceList({ initialIndex }: SourceListProps): React.ReactNode {
   const { navigate, goBack } = useNavigation();
   const state = useAppState();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<NuGetSource | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(initialIndex ?? 0);
   const [healthResults, setHealthResults] = useState<ReadonlyMap<string, SourceHealthResult>>(
     new Map(),
   );
@@ -61,9 +65,9 @@ export function SourceList(): React.ReactNode {
       if (confirmDelete) return;
 
       if (input === "a") {
-        navigate({ kind: "source-add" });
+        navigate({ kind: "source-add" }, selectedIndex);
       } else if (input === "e" && selectedSource && selectedSource.configLevel === "user") {
-        navigate({ kind: "source-edit", sourceName: selectedSource.name });
+        navigate({ kind: "source-edit", sourceName: selectedSource.name }, selectedIndex);
       } else if (
         input === "d" &&
         selectedSource &&
@@ -164,8 +168,8 @@ export function SourceList(): React.ReactNode {
             onHighlight={(_item, index) => {
               setSelectedIndex(index);
             }}
-            onBack={goBack}
             isActive={!confirmDelete}
+            initialIndex={selectedIndex}
           />
         </Box>
       )}

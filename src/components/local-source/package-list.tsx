@@ -23,7 +23,11 @@ const HINTS = [
   { key: "Esc", label: "Back" },
 ];
 
-export function PackageList(): React.ReactNode {
+interface PackageListProps {
+  readonly initialIndex?: number;
+}
+
+export function PackageList({ initialIndex }: PackageListProps): React.ReactNode {
   const { navigate, goBack } = useNavigation();
   const state = useAppState();
   const dispatch = useAppDispatch();
@@ -31,7 +35,7 @@ export function PackageList(): React.ReactNode {
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [confirmRemove, setConfirmRemove] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(initialIndex ?? 0);
 
   const loadPackages = useCallback(async () => {
     setLoading(true);
@@ -55,7 +59,7 @@ export function PackageList(): React.ReactNode {
       if (confirmRemove) return;
 
       if (input === "a") {
-        navigate({ kind: "local-source-add" });
+        navigate({ kind: "local-source-add" }, selectedIndex);
       } else if (input === " ") {
         const pkg = state.localPackages[selectedIndex];
         if (pkg) {
@@ -74,7 +78,7 @@ export function PackageList(): React.ReactNode {
       } else if (input === "i") {
         const pkg = state.localPackages[selectedIndex];
         if (pkg) {
-          navigate({ kind: "package-detail", packagePath: pkg.filePath });
+          navigate({ kind: "package-detail", packagePath: pkg.filePath }, selectedIndex);
         }
       } else if (key.escape) {
         goBack();
@@ -131,8 +135,8 @@ export function PackageList(): React.ReactNode {
             onHighlight={(_item, index) => {
               setSelectedIndex(index);
             }}
-            onBack={goBack}
             isActive={!confirmRemove}
+            initialIndex={selectedIndex}
           />
         </Box>
       )}

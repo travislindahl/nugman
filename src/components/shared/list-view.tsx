@@ -16,6 +16,7 @@ interface ListViewProps {
   readonly onHighlight?: (item: ListViewItem, index: number) => void;
   readonly onBack?: () => void;
   readonly isActive?: boolean;
+  readonly initialIndex?: number;
 }
 
 export function ListView({
@@ -24,8 +25,11 @@ export function ListView({
   onHighlight,
   onBack,
   isActive = true,
+  initialIndex,
 }: ListViewProps): React.ReactNode {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(() =>
+    initialIndex != null ? Math.max(0, Math.min(initialIndex, items.length - 1)) : 0,
+  );
   const onHighlightRef = useRef(onHighlight);
   onHighlightRef.current = onHighlight;
   const itemsRef = useRef(items);
@@ -35,6 +39,10 @@ export function ListView({
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
+      if (selectedIndex !== 0) {
+        const item = itemsRef.current[selectedIndex];
+        if (item && onHighlightRef.current) onHighlightRef.current(item, selectedIndex);
+      }
       return;
     }
     const item = itemsRef.current[selectedIndex];

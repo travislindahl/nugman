@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Box, Text } from "ink";
 import { useNavigation } from "../../hooks/use-navigation.js";
 import { ListView } from "../shared/list-view.js";
@@ -18,11 +18,16 @@ const HINTS = [
   { key: "Esc", label: "Back" },
 ];
 
-export function ConfigList(): React.ReactNode {
+interface ConfigListProps {
+  readonly initialIndex?: number;
+}
+
+export function ConfigList({ initialIndex }: ConfigListProps): React.ReactNode {
   const { navigate, goBack } = useNavigation();
   const [files, setFiles] = useState<readonly NuGetConfigFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const selectedIndexRef = useRef(initialIndex ?? 0);
 
   const loadFiles = useCallback(async () => {
     setLoading(true);
@@ -62,8 +67,14 @@ export function ConfigList(): React.ReactNode {
         <Box marginY={1}>
           <ListView
             items={items}
-            onSelect={(item) => navigate({ kind: "config-file-detail", filePath: item.key })}
+            onSelect={(item) =>
+              navigate({ kind: "config-file-detail", filePath: item.key }, selectedIndexRef.current)
+            }
+            onHighlight={(_item, index) => {
+              selectedIndexRef.current = index;
+            }}
             onBack={goBack}
+            initialIndex={initialIndex}
           />
         </Box>
       )}

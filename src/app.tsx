@@ -116,27 +116,29 @@ function AppContent(): React.ReactNode {
     );
   }
 
+  const { selectedIndex } = state.currentView;
+
   switch (state.currentView.kind) {
     case "main-menu":
-      return <MainMenu />;
+      return <MainMenu initialIndex={selectedIndex} />;
     case "sources":
-      return <SourceList />;
+      return <SourceList initialIndex={selectedIndex} />;
     case "source-edit":
       return <SourceEdit sourceName={state.currentView.sourceName} />;
     case "source-add":
       return <SourceAdd />;
     case "cache":
-      return <CacheList />;
+      return <CacheList initialIndex={selectedIndex} />;
     case "cache-browse":
-      return <CacheBrowse cacheType={state.currentView.cacheType} />;
+      return <CacheBrowse cacheType={state.currentView.cacheType} initialIndex={selectedIndex} />;
     case "local-source":
-      return <PackageList />;
+      return <PackageList initialIndex={selectedIndex} />;
     case "local-source-add":
       return <AddPackage />;
     case "package-detail":
       return <PackageDetail packagePath={state.currentView.packagePath} />;
     case "package-search":
-      return <SearchView />;
+      return <SearchView initialIndex={selectedIndex} />;
     case "search-result-detail":
       return (
         <SearchDetail
@@ -148,7 +150,7 @@ function AppContent(): React.ReactNode {
         />
       );
     case "config-viewer":
-      return <ConfigList />;
+      return <ConfigList initialIndex={selectedIndex} />;
     case "config-file-detail":
       return <ConfigDetail filePath={state.currentView.filePath} />;
   }
