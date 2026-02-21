@@ -1,6 +1,6 @@
 {
   "name": "nugman",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "NuGet TUI Manager - Terminal UI for managing .NET NuGet configurations",
   "type": "module",
   "bin": {
